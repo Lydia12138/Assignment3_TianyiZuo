@@ -1,0 +1,107 @@
+---
+title: "A3_Tianyi_Zuo"
+author: "Tianyi Zuo"
+date: "2022/1/26"
+output: html_document
+---
+
+### GitHub username: Lydia12138
+### Date: 2022-01-26 Repo:https://github.com/Lydia12138/Assignment-3-
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)#package loading
+```
+
+```{r}
+MyData<-read.csv("./InputData/FallopiaData.csv")#loading the data
+str(MyData)#check the structure of the Data
+head(MyData)
+class(MyData)
+dim(MyData)
+tail(MyData)
+summary(MyData)
+```
+
+
+## Remove rows with 'Total' biomass < 60
+```{r}
+MyData <- MyData %>%
+  filter(Total >= 60)
+```
+
+## Reorder the columns so that they are in the order: ‘Total’, ‘Taxon’, ‘Scenario’, ‘Nutrients’, and remove the other columns
+```{r}
+SubData <- select(MyData, Total, Taxon, Scenario, Nutrients)
+head(SubData)
+```
+
+## Make a new column TotalG, which converts the ‘Total’ column from mg to grams AND replace Total with TotalG, and add it to the dataset.
+We know that converts the 1 mg equal to 0.001 grams. Here I add a new column TotalG with different units(grams), and TotalG is Total divide 1000.
+```{r}
+NewData <- transmute(SubData,TotalG = Total / 1000, Taxon, Scenario, Nutrients)
+head(NewData)
+```
+
+## Write a custom function that will take two inputs from the user: 
+1. a vector of data to process (e.g. column from a data.frame object) and 
+2. a string that defines what calculation to perform.
+if string #2 is "Average" then calculate the average value for the column named in vector #1
+if string #2 is "Sum" then calculate the sum of values for the column named in vector #1
+if string #2 is "Observations" then count the number of observed values for the column named in vector #1
+if string #2 is anything else, then output an error to the user 
+
+```{r}
+# Write a custom function have two inputs from the user: vec1 is a vector, and str1 is a string.
+# used else if to achieve the function
+my_function <- function(vec1, str1){
+  if (str1 == "Average"){
+    Average <- mean(vec1)
+    return(Average)
+  }else if (str1 == "Sum"){
+    Sum <- sum(vec1)
+    return(Sum)
+  }else if (str1 == "Observation"){
+    Count <- length(vec1)
+    return (Count)
+  }else {
+    cat("Error! You can choose from Average/Sum/Observation.")
+  }
+}
+```
+
+## Uses the function to count the total number of observations in the 'Taxon' column
+```{r}
+cat("The total number of observations is", my_function(NewData$Taxon,"Observation"))
+```
+
+## Uses the function  to calculate the average TotalG for each of the two Nutrient concentrations
+```{r}
+NewData %>% group_by(Nutrients) %>% 
+  summarise(Average_TotalG = my_function(TotalG, "Average"))
+```
+
+
+## Write (i.e. save) the new data to a file called "WrangledData.csv" in the Output folder.
+```{r}
+write.csv(NewData, "Output/WrangledData.csv", row.names = FALSE)
+```
+
+
+## Test the function
+```{r}
+Vector <- c(1,2,3,4,5,6,7,8,9,10)
+# here I used this vector to test my function.  The output should be average = 5.5, sum = 55, Observation = 10 for this vector
+my_function(Vector, "Average")
+```
+```{r}
+my_function(Vector, "Sum")
+```
+```{r}
+my_function(Vector, "Observation")
+```
+
+
