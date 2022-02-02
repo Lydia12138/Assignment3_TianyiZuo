@@ -29,7 +29,7 @@ summary(MyData)
 ```{r}
 # Use a dplyr command and regular expression to add a new column called Sp
 # Here I shortens the genus name in the Organism column to only the first letter and period
-MyData <- mutate(MyData, Sp = gsub("([A-Z]).* (.*)", "\\1. \\2", MyData$organism))
+MyData <- mutate(MyData, Sp = sub("(\\w)\\w+ (.*)", "\\1. \\2", MyData$organism))
 head(MyData)
 ```
 
