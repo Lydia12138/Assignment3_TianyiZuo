@@ -1,0 +1,46 @@
+---
+title: "A4_Tianyi_Zuo"
+author: "Tianyi Zuo"
+date: "2022/2/2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### GitHub username: Lydia12138
+### Date: 2022-02-02 Repo:https://github.com/Lydia12138/Assignment3_TianyiZuo
+
+```{r}
+library(dplyr)#package loading
+```
+
+```{r}
+MyData<-read.csv("./InputData/measurements.csv")#loading the data
+str(MyData)#check the structure of the Data
+head(MyData)
+class(MyData)
+dim(MyData)
+tail(MyData)
+summary(MyData)
+```
+
+```{r}
+# Use a dplyr command and regular expression to add a new column called Sp
+# Here I shortens the genus name in the Organism column to only the first letter and period
+MyData <- mutate(MyData, Sp = gsub("([A-Z]).* (.*)", "\\1. \\2", MyData$organism))
+head(MyData)
+```
+
+```{r}
+# creating new data set using dplyr which replace organism  with Sp. 
+NewData <- MyData %>% select(Sp, Limb.width, Limb.length, Observer)
+head(NewData)
+```
+
+```{r}
+# Output a new file named "MeasShort.csv"
+write.csv(NewData, "Output/MeasShort.csv") 
+```
+
