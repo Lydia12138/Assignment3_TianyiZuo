@@ -34,7 +34,7 @@ head(MyData)
 ```
 
 ```{r}
-# creating new data set using dplyr which replace organism  with Sp. 
+# creating new data set using dplyr which replace organism with Sp. 
 NewData <- MyData %>% select(Sp, Limb.width, Limb.length, Observer)
 head(NewData)
 ```
